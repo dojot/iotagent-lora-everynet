@@ -1,0 +1,21 @@
+{
+  "name": "dojot.iotagent.lora-everynet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node build/index.js"
+  },
+  "author": "Giovanni Curiel dos Santos",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/ws": "^4.0.2",
+    "axios": "^0.18.0",
+    "dojot-iotagent": "github:dojot/iotagent-nodejs",
+    "redis": "^2.8.0",
+    "ws": "^5.1.1"
+  }
+}
