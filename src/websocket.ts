@@ -54,7 +54,7 @@ class WebSocketClient {
         this.onMessageCb(data);
       } else {
         console.log("No message callback was set.");
-      } 
+      }
     });
 
     this.websocket.on("close", (code: number) => {

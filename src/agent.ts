@@ -20,7 +20,7 @@ class Agent {
   /** Device cache - translates LoRa device ID to dojot device ID */
   private cacheHandler: CacheHandler;
 
-  /** 
+  /**
    * Flag indicating that this agent is ready to use - all devices and tenants
    * were successfully retrieved.
    */
@@ -35,11 +35,11 @@ class Agent {
 
   /**
    * Look for LoRa device_eui attribute among all other attributes in a device.
-   * 
+   *
    * If a attribute called "device_eui" (device identifier for LoRa) is found,
    * then it is returned alongside its template ID (as there is no way so far
    * to identify the template related to LoRa devices).
-   * 
+   *
    * @param device The device to be verified.
    * @param tenant Tenant associated to the device.
    * @returns The identifier attribute (as is retrieved from the device) and
@@ -48,10 +48,12 @@ class Agent {
   findLoRaId(device: DojotDevice, tenant: string) : [Attr | null, string | null] {
     // Look for an attribute called device_eui.
     for (let templateid in device.attrs) {
-      for (let attr of device.attrs[templateid]) {
-        if (attr.label == "dev_eui") {
-          // Got it.
-          return [attr, templateid];
+      if (device.attrs.hasOwnProperty(templateid)) {
+        for (let attr of device.attrs[templateid]) {
+          if (attr.label == "dev_eui") {
+            // Got it.
+            return [attr, templateid];
+          }
         }
       }
     }
@@ -84,9 +86,9 @@ class Agent {
 
   /**
    * Process a received message from WebSocket.
-   * 
+   *
    * Its content is supposed to be whatever message the LoRa network-server sent
-   * to this IoT agent. This message is supposed to have a EveryNetMessage 
+   * to this IoT agent. This message is supposed to have a EveryNetMessage
    * structure.
    * @param data The data received from WebSocket.
    */

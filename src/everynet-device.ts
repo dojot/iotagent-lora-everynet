@@ -10,11 +10,11 @@ export interface EveryNetDevice {
   nwkskey: string; /** Network Session Key as described in LoRaWAN specification */
   appskey: string; /** Application Session Key as described in LoRaWAN specification */
   /**
-   * Device class as described in LoRaWAN specification. 
+   * Device class as described in LoRaWAN specification.
    * Possible values are: A, C.
-   * Class B selected automatically. 
+   * Class B selected automatically.
    */
-  dev_class: "A" | "B" | "C"; 
+  dev_class: "A" | "B" | "C";
   adr: Adr; /** Adaptive data rate object */
   band: string; /** Device band name */
 
@@ -30,12 +30,63 @@ export interface EveryNetDevice {
   rx1?: RX1; /** 	Params of first RX window */
 
   /**
-   * Enable strict security mode. 
+   * Enable strict security mode.
    * Device must have strictly increasing counter.
    */
-  strict_counter: boolean; 
+  strict_counter: boolean;
   rx2?: RX2; /** Params of second RX window */
 }
+
+/**
+ * Remove all pseudo-substructures from a device.
+ * @param everynetDevice The device to be cleaned
+ */
+function cleanEverynetDevice(everynetDevice: any) {
+  delete everynetDevice["adr_datarate"];
+  delete everynetDevice["adr_enabled"];
+  delete everynetDevice["adr_mode"];
+  delete everynetDevice["adr_tx_power"];
+  delete everynetDevice["geolocation_lat"];
+  delete everynetDevice["geolocation_lng"];
+  delete everynetDevice["geolocation_precision"];
+  delete everynetDevice["rx1_delay"];
+  delete everynetDevice["rx1_status"];
+  delete everynetDevice["rx1_current_delay"];
+  delete everynetDevice["rx2_force"];
+}
+
+/**
+ * Asserts that a device has all the mandatory parameters.
+ * @param everynetDevice The device to be checked.
+ * @returns 0 if everything is ok with the device, -1 otherwise
+ */
+function assertEverynetDevice(everynetDevice: any) : number {
+  if (!("dev_eui" in everynetDevice)) { return -1; }
+  if (!("app_eui" in everynetDevice)) { return -1; }
+  if (!("app_key" in everynetDevice)) { return -1; }
+  if (!("activation" in everynetDevice)) { return -1; }
+  if (!("encryption" in everynetDevice)) { return -1; }
+  if (!("dev_addr" in everynetDevice)) { return -1; }
+  if (!("nwkskey" in everynetDevice)) { return -1; }
+  if (!("appskey" in everynetDevice)) { return -1; }
+  if (!("dev_class" in everynetDevice)) { return -1; }
+  if (!("band" in everynetDevice)) { return -1; }
+  if (!("counters_size" in everynetDevice)) { return -1; }
+  if (!("strict_counter" in everynetDevice)) { return -1; }
+
+  if (!("adr_datarate" in everynetDevice)) { return -1; }
+  if (!("adr_enabled" in everynetDevice)) { return -1; }
+  if (!("adr_mode" in everynetDevice)) { return -1; }
+  if (!("adr_tx_power" in everynetDevice)) { return -1; }
+  return 0;
+}
+
+/**
+ * Converts a device from DeviceManager format to a LoRa-compatible format.
+ * @param device A device structure as sent by DeviceManager
+ * @param templateId The LoRa associated template.
+ * @returns A converted device structure, ready to be sent to LoRa network server.
+ */
 export function convertDeviceEventToEveryNet(device: DeviceEvent, templateId: string): EveryNetDevice | null {
   // As the device event is generated at runtime, we need to check all its
   // attributes
@@ -46,24 +97,9 @@ export function convertDeviceEventToEveryNet(device: DeviceEvent, templateId: st
     everynetDevice[attr.label] = attr.static_value;
   }
 
-  if (!("dev_eui" in everynetDevice)) { return null; }
-  if (!("app_eui" in everynetDevice)) { return null; }
-  if (!("app_key" in everynetDevice)) { return null; }
-  if (!("activation" in everynetDevice)) { return null; }
-  if (!("encryption" in everynetDevice)) { return null; }
-  if (!("dev_addr" in everynetDevice)) { return null; }
-  if (!("nwkskey" in everynetDevice)) { return null; }
-  if (!("appskey" in everynetDevice)) { return null; }
-  if (!("dev_class" in everynetDevice)) { return null; }
-  if (!("band" in everynetDevice)) { return null; }
-  if (!("counters_size" in everynetDevice)) { return null; }
-  if (!("strict_counter" in everynetDevice)) { return null; }
-
-  if (!("adr_datarate" in everynetDevice)) { return null; }
-  if (!("adr_enabled" in everynetDevice)) { return null; }
-  if (!("adr_mode" in everynetDevice)) { return null; }
-  if (!("adr_tx_power" in everynetDevice)) { return null; }
-
+  if (assertEverynetDevice(everynetDevice) != 0) {
+    return null;
+  }
 
   // Converting structures
   everynetDevice["adr"] = {
@@ -73,21 +109,12 @@ export function convertDeviceEventToEveryNet(device: DeviceEvent, templateId: st
     "tx_power": everynetDevice["adr_tx_power"]
   }
 
-  delete everynetDevice["adr_datarate"];
-  delete everynetDevice["adr_enabled"];
-  delete everynetDevice["adr_mode"];
-  delete everynetDevice["adr_tx_power"];
-
   if ("geolocation.lat" in everynetDevice) {
     everynetDevice["geolocation"] = {
       "lat": everynetDevice["geolocation_lat"],
       "lng": everynetDevice["geolocation_lng"],
       "precision": everynetDevice["geolocation_precision"]
     }
-
-    delete everynetDevice["geolocation_lat"];
-    delete everynetDevice["geolocation_lng"];
-    delete everynetDevice["geolocation_precision"];
   }
 
   if ("rx1_delay" in everynetDevice) {
@@ -96,17 +123,14 @@ export function convertDeviceEventToEveryNet(device: DeviceEvent, templateId: st
       "status": everynetDevice["rx1_status"],
       "current_delay": everynetDevice["rx1_current_delay"],
     }
-
-    delete everynetDevice["rx1_delay"];
-    delete everynetDevice["rx1_status"];
-    delete everynetDevice["rx1_current_delay"];
   }
 
   if ("rx2_force" in everynetDevice) {
     everynetDevice["rx2"] = { "force": everynetDevice["rx2_force"]};
-    delete everynetDevice["rx2_force"];
   }
-  
+
+
+  cleanEverynetDevice(everynetDevice);
   return everynetDevice;
 }
 
