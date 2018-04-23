@@ -7,6 +7,7 @@ import { EveryNetMessage } from './everynet-message';
 import { CacheHandler, CacheEntry } from "./cache";
 import { DojotDevice, DeviceEvent, Attr } from './dojot-device';
 import { EveryNetDevice, convertDeviceEventToEveryNet } from './everynet-device';
+import { EverynetNetworkServer } from './everynet-ns';
 
 
 class Agent {
@@ -14,8 +15,8 @@ class Agent {
   /** dojot IoT agent helper */
   private iotagent: IoTAgent;
 
-  /** WebSocket client used to connect to EveryNet's network-server */
-  private wsClient: WebSocketClient;
+  /** Network server interface */
+  private everynetNs: EverynetNetworkServer;
 
   /** Device cache - translates LoRa device ID to dojot device ID */
   private cacheHandler: CacheHandler;
@@ -29,7 +30,9 @@ class Agent {
   constructor() {
     this.iotagent = new IoTAgent();
     this.cacheHandler = new CacheHandler();
-    this.wsClient = new WebSocketClient("ws://" + config.LORA_SERVER, config.RECONN_INTERVAL);
+    this.everynetNs = new EverynetNetworkServer((msg: EveryNetMessage): void => {
+      this.processWebSocketMessage(msg);
+    });
     this.isReady = false;
   }
 
@@ -85,20 +88,14 @@ class Agent {
   }
 
   /**
-   * Process a received message from WebSocket.
+   * Process a received message from network server.
    *
    * Its content is supposed to be whatever message the LoRa network-server sent
    * to this IoT agent. This message is supposed to have a EveryNetMessage
    * structure.
    * @param data The data received from WebSocket.
    */
-  processWebSocketMessage(data: WebSocket.Data): void {
-    let messageObj: EveryNetMessage = JSON.parse(data.toString());
-    if (messageObj.meta === undefined || messageObj.meta.device === undefined) {
-      console.log('Cannot get meta attr or meta.device attr from JSON. Discarding message');
-      return;
-    }
-
+  processWebSocketMessage(messageObj: EveryNetMessage): void {
     let cacheEntry = this.cacheHandler.lookup(messageObj.meta.device);
 
     if (cacheEntry === null) {
@@ -128,7 +125,6 @@ class Agent {
     console.log(util.inspect(device, {depth: null}));
 
     console.log("Trying to find LoRa template...");
-
     let dojotDevice: DojotDevice = device.data;
     let tenant = device.meta["service"];
     let [attr, templateid] = this.findLoRaId(dojotDevice, tenant);
@@ -141,23 +137,9 @@ class Agent {
         return;
       }
       let loraId = everynetDevice.dev_eui;
-      console.log("Sending device creation request to network server...");
-      let axiosConfig: AxiosRequestConfig = {
-        url: "http://" + config.LORA_SERVER + "/devices",
-        method: "POST",
-        data: JSON.stringify(everynetDevice),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-      axios(axiosConfig).then((response: AxiosResponse) => {
-        console.log("Response: " + response.status);
-        if (response.status == 200) {
-          this.cacheHandler.cache[loraId] = new CacheEntry(dojotDevice.id, tenant);
-        }
-      });
-      console.log("... request sent.");
-
+      this.everynetNs.createDevice(everynetDevice).then(() => {
+        this.cacheHandler.cache[loraId] = new CacheEntry(dojotDevice.id, tenant);
+      })
     }
   }
 
@@ -170,27 +152,15 @@ class Agent {
     console.log("Result is: " + attr)
 
     if (templateid && attr) {
-      console.log("Sending device creation request to network server...");
       let loraId = attr.static_value;
-      let axiosConfig: AxiosRequestConfig = {
-        url: "http://" + config.LORA_SERVER + "/devices/" + attr.static_value,
-        method: "DELETE"
-      }
-      axios(axiosConfig).then((response: AxiosResponse) => {
-        console.log("Response: " + response.status);
-        if (response.status == 200) {
-          delete this.cacheHandler.cache[loraId];
-        }
-      });
-      console.log("... request sent.");
+      this.everynetNs.removeDevice(loraId).then(() => {
+        delete this.cacheHandler.cache[loraId];
+      })
     }
   }
 
   init() {
-    this.wsClient.onMessage((data: WebSocket.Data): void => {
-      this.processWebSocketMessage(data);
-    });
-
+    this.everynetNs.init();
     this.iotagent.on("device.create", (data: any) => {
       console.log("Processing device creation")
       this.processDeviceCreation(data);
@@ -200,8 +170,6 @@ class Agent {
       console.log("Processing device creation")
       this.processDeviceRemoval(data);
     })
-
-    this.wsClient.start();
   }
 }
 
