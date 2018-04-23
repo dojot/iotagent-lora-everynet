@@ -58,5 +58,6 @@ typings/
 .env
 
 build/
+docs/build/
 node_modules/
 .vscode

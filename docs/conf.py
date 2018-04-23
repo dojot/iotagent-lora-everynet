@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# iotagent-mosca documentation build configuration file, created by
+# iotagent-lora-everynet documentation build configuration file, created by
 # sphinx-quickstart on Tue Feb 14 17:45:39 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -19,7 +19,7 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
+import sphinx_rtd_theme
 
 # -- General configuration ------------------------------------------------
 
@@ -30,7 +30,7 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinxcontrib.apiblueprint']
+extensions = []
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -45,9 +45,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'iotagent-mosca'
+project = u'iotagent-lora-everynet'
 copyright = u'2018, CPqD'
-author = u'Matheus Magalhães Ribeiro'
+author = u'Giovanni Curiel dos Santos'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -82,9 +82,8 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-#html_theme = 'alabaster'
+# html_theme = 'alabaster'
 
-import sphinx_rtd_theme
 html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
@@ -102,7 +101,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'iotagentmoscadoc'
+htmlhelp_basename = 'iotagentlora-everynetdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -129,7 +128,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'iotagent-mosca.tex', u'iotagent-mosca Documentation',
+    (master_doc, 'iotagent-lora-everynet.tex', 
+     u'iotagent-lora-everynet Documentation',
      u'Matheus Magalhaes', 'manual'),
 ]
 
@@ -139,7 +139,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'iotagent-mosca', u'iotagent-mosca Documentation',
+    (master_doc, 'iotagent-lora-everynet', 
+     u'iotagent-lora-everynet Documentation',
      [author], 1)
 ]
 
@@ -150,8 +151,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'iotagent-mosca', u'iotagent-mosca Documentation',
-     author, 'iotagent-mosca', 'IoT agent component for dojot platform.',
+    (master_doc, 'iotagent-lora-everynet',
+     u'iotagent-lora-everynet Documentation',
+     author, 'iotagent-lora-everynet',
+     'IoT agent component for dojot platform.',
      'Miscellaneous'),
 ]
 
