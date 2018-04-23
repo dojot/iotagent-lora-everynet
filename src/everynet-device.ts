@@ -61,23 +61,28 @@ function cleanEverynetDevice(everynetDevice: any) {
  * @returns 0 if everything is ok with the device, -1 otherwise
  */
 function assertEverynetDevice(everynetDevice: any) : number {
-  if (!("dev_eui" in everynetDevice)) { return -1; }
-  if (!("app_eui" in everynetDevice)) { return -1; }
-  if (!("app_key" in everynetDevice)) { return -1; }
-  if (!("activation" in everynetDevice)) { return -1; }
-  if (!("encryption" in everynetDevice)) { return -1; }
-  if (!("dev_addr" in everynetDevice)) { return -1; }
-  if (!("nwkskey" in everynetDevice)) { return -1; }
-  if (!("appskey" in everynetDevice)) { return -1; }
-  if (!("dev_class" in everynetDevice)) { return -1; }
-  if (!("band" in everynetDevice)) { return -1; }
-  if (!("counters_size" in everynetDevice)) { return -1; }
-  if (!("strict_counter" in everynetDevice)) { return -1; }
+  let mandatory_params = [
+          "dev_eui",
+          "app_eui",
+          "app_key",
+          "activation",
+          "encryption",
+          "dev_addr",
+          "nwkskey",
+          "appskey",
+          "dev_class",
+          "band",
+          "counters_size",
+          "strict_counter",
+          "adr_datarate",
+          "adr_enabled",
+          "adr_mode",
+          "adr_tx_power"]
 
-  if (!("adr_datarate" in everynetDevice)) { return -1; }
-  if (!("adr_enabled" in everynetDevice)) { return -1; }
-  if (!("adr_mode" in everynetDevice)) { return -1; }
-  if (!("adr_tx_power" in everynetDevice)) { return -1; }
+    for (let param of mandatory_params) {
+      if (!(param in everynetDevice)) { return -1; }
+    }
+
   return 0;
 }
 
