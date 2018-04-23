@@ -2,11 +2,10 @@ FROM node:8
 
 WORKDIR /opt
 
-# the following is required for mosca to install correctly
-RUN apt-get update && apt-get install libzmq-dev -y
+RUN apt-get update --no-install-recommends && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ADD ./*.json /opt/
-RUN npm install
 ADD . /opt/
-CMD ["node", "/opt/index.js"]
-EXPOSE 1883
+
+RUN npm install && npm run build
+CMD ["node", "/opt/build/index.js"]
