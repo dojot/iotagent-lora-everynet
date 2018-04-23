@@ -1,5 +1,5 @@
 ﻿export interface DojotDevice {
-  attrs: Attrs[];
+  attrs: Attrs;
   created: string;
   id: string;
   label: string;

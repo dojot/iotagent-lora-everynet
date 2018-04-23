@@ -11,3 +11,5 @@ if (config.LORA_ACCESS_TOKEN == "" || config.LORA_ACCESS_TOKEN == null) {
 
 console.log("Starting agent");
 let agent = new Agent();
+agent.warmup();
+agent.init();
