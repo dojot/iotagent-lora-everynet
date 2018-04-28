@@ -96,7 +96,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -128,7 +128,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'iotagent-lora-everynet.tex', 
+    (master_doc, 'iotagent-lora-everynet.tex',
      u'iotagent-lora-everynet Documentation',
      u'Matheus Magalhaes', 'manual'),
 ]
@@ -139,7 +139,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'iotagent-lora-everynet', 
+    (master_doc, 'iotagent-lora-everynet',
      u'iotagent-lora-everynet Documentation',
      [author], 1)
 ]
