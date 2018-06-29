@@ -1,5 +1,5 @@
 FROM node:8
-MAINTAINER Giovanni Curiel dos Santos giovannicuriel@gmail.com
+LABEL maintainer="Giovanni Curiel dos Santos giovannicuriel@gmail.com"
 
 WORKDIR /opt
 
