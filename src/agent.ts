@@ -8,7 +8,6 @@ import { CacheHandler, CacheEntry } from "./cache";
 import { DojotDevice, DeviceEvent, Attr } from './dojot-device';
 import { EveryNetDevice, convertDeviceEventToEveryNet } from './everynet-device';
 import { EverynetNetworkServer } from './everynet-ns';
-import { Base64 } from 'js-base64';
 
 class Agent {
 
@@ -87,20 +86,6 @@ class Agent {
     });
   }
 
-  private ALPHA: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-private PADCHAR: string = '=';
-
-  private getByte(s: string, i: number): number {
-    const x = s.charCodeAt(i);
-    return x;
-  }
-
-  private getByte64(s: string, i: number): number {
-    const idx = this.ALPHA.indexOf(s.charAt(i));
-    return idx;
-  }
-
-
   /**
    * Process a received message from network server.
    *
@@ -131,8 +116,6 @@ private PADCHAR: string = '=';
         let updateData = {
          "encrypted_payload": messageObj.params.payload
         }
-let teste = Base64.atob(messageObj.params.payload);
-console.log("teste", teste);
 
         this.iotagent.updateAttrs(cacheEntry.id, cacheEntry.tenant, updateData, {});
     }
