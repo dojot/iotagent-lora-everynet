@@ -1,4 +1,5 @@
 import WebSocket = require("ws");
+import { config } from "./config";
 
 /**
  * Class for communications using WebSockets
@@ -23,7 +24,7 @@ class WebSocketClient {
    * @param autoReconnectInterval Interval between reconnections
    */
   constructor(server: string, autoReconnectInterval: number) {
-    this.server = server;
+    this.server = server + "?access_token=" + config.LORA_ACCESS_TOKEN + "&filter=";
     this.autoReconnectInterval = autoReconnectInterval;
     this.websocket = undefined;
     this.onMessageCb = undefined;
@@ -51,6 +52,7 @@ class WebSocketClient {
 
     this.websocket.on("message", (data: WebSocket.Data) => {
       if (this.onMessageCb) {
+        console.log("message" + data);
         this.onMessageCb(data);
       } else {
         console.log("No message callback was set.");
@@ -64,6 +66,7 @@ class WebSocketClient {
           break;
         default:
           // Abnormal closure
+          console.log("abnormal closure" + code);
           this.reconnect();
           break;
       }
@@ -72,6 +75,7 @@ class WebSocketClient {
     this.websocket.on("error", (event: any) => {
       switch (event.code) {
         case "ECONNREFUSED":
+          console.log("ECONNREFUSED");
           this.reconnect();
           break;
         default:
