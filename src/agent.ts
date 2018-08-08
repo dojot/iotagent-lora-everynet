@@ -76,9 +76,10 @@ class Agent {
         this.iotagent.listDevices(tenant).then((devices: string[]) => {
           for (let device of devices) {
             this.iotagent.getDevice(device, tenant).then((deviceinfo: DojotDevice) => {
+              let deviceTemplates = (deviceinfo.templates == null ? undefined : deviceinfo.templates)
               let [attr, templateid] = this.findLoRaId(deviceinfo, tenant);
               if (attr != null) {
-                this.cacheHandler.cache[attr.static_value] = new CacheEntry(deviceinfo.id, tenant);
+                this.cacheHandler.cache[attr.static_value] = new CacheEntry(deviceinfo.id, tenant, deviceTemplates);
               }
             });
           }
@@ -116,7 +117,10 @@ class Agent {
     let updateData = {
       "encrypted_payload": messageObj.params.encrypted_payload
     }
-    this.iotagent.updateAttrs(cacheEntry.id, cacheEntry.tenant, updateData, {});
+    let metadata = {
+      "templates": cacheEntry.templateIds
+    }
+    this.iotagent.updateAttrs(cacheEntry.id, cacheEntry.tenant, updateData, metadata);
   }
 
   processDeviceCreation(device: DeviceEvent) {
@@ -137,8 +141,9 @@ class Agent {
         return;
       }
       let loraId = everynetDevice.dev_eui;
+      let deviceTemplates = (device.data.templates == null ? undefined : device.data.templates);
       this.everynetNs.createDevice(everynetDevice).then(() => {
-        this.cacheHandler.cache[loraId] = new CacheEntry(dojotDevice.id, tenant);
+        this.cacheHandler.cache[loraId] = new CacheEntry(dojotDevice.id, tenant, deviceTemplates);
       })
     }
   }

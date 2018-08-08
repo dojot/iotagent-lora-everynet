@@ -4,11 +4,13 @@ import util = require("util");
 class CacheEntry {
   public id: string;
   public tenant: string;
+  public templateIds?: string[];
 
 
-  constructor(id: string, tenant: string) {
+  constructor(id: string, tenant: string, templateIds?: string[]) {
     this.id = id;
     this.tenant = tenant;
+    this.templateIds = templateIds;
   }
 };
 

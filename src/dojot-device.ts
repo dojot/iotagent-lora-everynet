@@ -3,7 +3,7 @@
   created: string;
   id: string;
   label: string;
-  templates?: (string)[] | null;
+  templates?: string[] | null;
 }
 
 export interface Attrs {
