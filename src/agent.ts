@@ -76,7 +76,7 @@ class Agent {
           for (let device of devices) {
             this.iotagent.getDevice(device, tenant).then((deviceinfo: DojotDevice) => {
               let deviceTemplates = (deviceinfo.templates == null ? undefined : deviceinfo.templates)
-              let [attr, templateid] = this.findLoRaId(deviceinfo, tenant);
+              let [attr, ] = this.findLoRaId(deviceinfo, tenant);
               if (attr != null) {
                 this.cacheHandler.cache[attr.static_value] = new CacheEntry(deviceinfo.id, tenant, deviceTemplates);
               }
