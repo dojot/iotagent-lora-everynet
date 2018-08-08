@@ -9,7 +9,6 @@ import { DojotDevice, DeviceEvent, Attr } from './dojot-device';
 import { EveryNetDevice, convertDeviceEventToEveryNet } from './everynet-device';
 import { EverynetNetworkServer } from './everynet-ns';
 
-
 class Agent {
 
   /** dojot IoT agent helper */
@@ -97,10 +96,10 @@ class Agent {
    * @param data The data received from WebSocket.
    */
   processWebSocketMessage(messageObj: EveryNetMessage): void {
-    let cacheEntry = this.cacheHandler.lookup(messageObj.meta.device);
+    let cacheEntry = this.cacheHandler.lookup(messageObj.meta.device_addr);
 
     if (cacheEntry === null) {
-      console.log('Cannot get device data from device ID: ' + messageObj.meta.device);
+      console.log('Cannot get device data from device ID: ' + messageObj.meta.device_addr);
       return;
     }
     if (cacheEntry.id === "") {
@@ -108,19 +107,21 @@ class Agent {
       // TODO emit iotagent warning
       return;
     }
-    console.log("Detected Dojot device ID: " + cacheEntry.id + " <-> LoRa device eui: " + messageObj.meta.device);
+    console.log("Detected Dojot device ID: " + cacheEntry.id + " <-> LoRa device eui: " + messageObj.meta.device_addr);
 
     // TODO It might be a good idea to format the message sent through Kafka
     // as a simple key-value JSON, so a flow to translate this message is not
     // needed.
-
-    let updateData = {
-      "encrypted_payload": messageObj.params.encrypted_payload
+    
+    if (messageObj.type === "uplink") {
+        let updateData = {
+         "encrypted_payload": messageObj.params.payload
+        }
+        let metadata = {
+          "templates": cacheEntry.templateIds
+        }
+        this.iotagent.updateAttrs(cacheEntry.id, cacheEntry.tenant, updateData, metadata);
     }
-    let metadata = {
-      "templates": cacheEntry.templateIds
-    }
-    this.iotagent.updateAttrs(cacheEntry.id, cacheEntry.tenant, updateData, metadata);
   }
 
   processDeviceCreation(device: DeviceEvent) {
