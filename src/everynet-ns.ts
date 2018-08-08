@@ -19,7 +19,7 @@ class EverynetNetworkServer {
   private wsCallback: (message: EveryNetMessage) => void;
 
   constructor(wscbk: (message: EveryNetMessage) => void) {
-    this.wsClient = new WebSocketClient("ws://" + config.LORA_SERVER, config.RECONN_INTERVAL);
+    this.wsClient = new WebSocketClient(config.LORA_SERVER, config.RECONN_INTERVAL);
     this.isReady = false;
     this.wsCallback = wscbk;
   }
@@ -45,7 +45,7 @@ class EverynetNetworkServer {
     return new Promise((resolve, reject) => {
       console.log("Sending device creation request to network server...");
       let axiosConfig: AxiosRequestConfig = {
-        url: "http://" + config.LORA_SERVER + "/devices?access_token=" + config.LORA_ACCESS_TOKEN,
+        url: "http://" + config.LORA_SERVER + "/devices?access_token=" + config.LORA_ACCESS_TOKEN + "&filter=''" ,
         method: "POST",
         data: JSON.stringify(everynetDevice),
         headers: {
@@ -72,7 +72,7 @@ class EverynetNetworkServer {
     return new Promise((resolve, reject) => {
       console.log("Sending device removal request to network server...");
       let axiosConfig: AxiosRequestConfig = {
-        url: "http://" + config.LORA_SERVER + "/devices/" + loraDeviceId + "?access_token=" + config.LORA_ACCESS_TOKEN,
+        url: "http://" + config.LORA_SERVER + "/devices/" + loraDeviceId + "?access_token=" + config.LORA_ACCESS_TOKEN + "&filter=''",
         method: "DELETE"
       }
       axios(axiosConfig).then((response: AxiosResponse) => {
