@@ -1,6 +1,6 @@
 import util = require("util");
 import axios, {AxiosRequestConfig, AxiosPromise, AxiosResponse } from "axios";
-import { IoTAgent }  from "dojot-iotagent";
+import { IoTAgent }  from "@dojot/iotagent-nodejs";
 import { WebSocket, WebSocketClient } from "./websocket"
 import { config } from "./config";
 import { EveryNetMessage } from './everynet-message';
@@ -68,22 +68,22 @@ class Agent {
    * receiving device updates.
    */
   warmup() {
-    this.iotagent.init();
+    // this.iotagent.init();
     // Retrieve all devices
-    this.iotagent.listTenants().then((tenants: string[]) => {
-      for (let tenant of tenants) {
-        this.iotagent.listDevices(tenant).then((devices: string[]) => {
-          for (let device of devices) {
-            this.iotagent.getDevice(device, tenant).then((deviceinfo: DojotDevice) => {
-              let [attr, templateid] = this.findLoRaId(deviceinfo, tenant);
-              if (attr != null) {
-                this.cacheHandler.cache[attr.static_value] = new CacheEntry(deviceinfo.id, tenant);
-              }
-            });
-          }
-        })
-      }
-    });
+    // this.iotagent.listTenants().then((tenants: string[]) => {
+    //   for (let tenant of tenants) {
+    //     this.iotagent.listDevices(tenant).then((devices: string[]) => {
+    //       for (let device of devices) {
+    //         this.iotagent.getDevice(device, tenant).then((deviceinfo: DojotDevice) => {
+    //           let [attr, templateid] = this.findLoRaId(deviceinfo, tenant);
+    //           if (attr != null) {
+    //             this.cacheHandler.cache[attr.static_value] = new CacheEntry(deviceinfo.id, tenant);
+    //           }
+    //         });
+    //       }
+    //     })
+    //   }
+    // });
   }
 
   /**
@@ -139,9 +139,9 @@ class Agent {
         return;
       }
       let loraId = everynetDevice.dev_eui;
-      this.everynetNs.createDevice(everynetDevice).then(() => {
+      // this.everynetNs.createDevice(everynetDevice).then(() => {
         this.cacheHandler.cache[loraId] = new CacheEntry(dojotDevice.id, tenant);
-      })
+      // })
     }
   }
 
@@ -162,13 +162,35 @@ class Agent {
   }
 
   init() {
+
+    console.log('Antes da chamada...');
     this.everynetNs.init();
-    this.iotagent.on("device.create", (data: any) => {
+
+    console.log('Antes do init...');
+    
+    try {
+      this.iotagent.init().then(() => {
+        console.log("antes do generate");
+        this.iotagent.generateDeviceCreateEventForActiveDevices();
+        console.log("depois do generate");
+      }).catch((err: any) => {
+        console.log("erro no init");
+        console.log(err);
+      });
+    } catch (error) {
+      console.log("erro no init por fora");
+      console.log(error);
+    }
+
+    
+    
+    console.log('Depois da chamada...');
+    this.iotagent.on('iotagent.device', "device.create", (data: any) => {
       console.log("Processing device creation")
       this.processDeviceCreation(data);
     })
 
-    this.iotagent.on("device.remove", (data: any) => {
+    this.iotagent.on('iotagent.device', "device.remove", (data: any) => {
       console.log("Processing device creation")
       this.processDeviceRemoval(data);
     })

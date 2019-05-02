@@ -24,7 +24,7 @@ class WebSocketClient {
    * @param autoReconnectInterval Interval between reconnections
    */
   constructor(server: string, autoReconnectInterval: number) {
-    this.server = server + "?access_token=" + config.LORA_ACCESS_TOKEN + "&filter=";
+    this.server = server + "?access_token=" + config.LORA_ACCESS_TOKEN;
     this.autoReconnectInterval = autoReconnectInterval;
     this.websocket = undefined;
     this.onMessageCb = undefined;
@@ -43,46 +43,54 @@ class WebSocketClient {
    */
   start() {
     console.log(`Creating connection to server: ${this.server}`);
-    this.websocket = new WebSocket(this.server);
-    console.log(`WebSocket was created.`);
+    try {
+      this.websocket = new WebSocket(this.server);
+    
+      console.log(`WebSocket was created.`);
 
-    this.websocket.on("open", () => {
-      console.log("open ws connection");
-    });
+      this.websocket.on("open", () => {
+        console.log("open ws connection");
+      });
 
-    this.websocket.on("message", (data: WebSocket.Data) => {
-      if (this.onMessageCb) {
-        console.log("message" + data);
-        this.onMessageCb(data);
-      } else {
-        console.log("No message callback was set.");
-      }
-    });
+      this.websocket.on("message", (data: WebSocket.Data) => {
+        if (this.onMessageCb) {
+          console.log("message" + data);
+          this.onMessageCb(data);
+        } else {
+          console.log("No message callback was set.");
+        }
+      });
 
-    this.websocket.on("close", (code: number) => {
-      switch (code) {
-        case 1000: // CLOSE_NORMAL
-          console.log("WebSocket: closed");
-          break;
-        default:
-          // Abnormal closure
-          console.log("abnormal closure" + code);
-          this.reconnect();
-          break;
-      }
-    });
+      this.websocket.on("close", (code: number) => {
+        switch (code) {
+          case 1000: // CLOSE_NORMAL
+            console.log("WebSocket: closed");
+            break;
+          default:
+            // Abnormal closure
+            console.log("abnormal closure" + code);
+            this.reconnect();
+            break;
+        }
+      });
 
-    this.websocket.on("error", (event: any) => {
-      switch (event.code) {
-        case "ECONNREFUSED":
-          console.log("ECONNREFUSED");
-          this.reconnect();
-          break;
-        default:
-          console.log("Error ws connection: " + event);
-          break;
-      }
-    });
+      this.websocket.on("error", (event: any) => {
+        switch (event.code) {
+          case "ECONNREFUSED":
+            console.log("ECONNREFUSED");
+            this.reconnect();
+            break;
+          default:
+            console.log("Error ws connection: " + event);
+            break;
+        }
+      });
+
+    } catch (error) {
+      console.log('Error on connect: ');
+      console.log(error);
+    }
+
   }
 
   /**

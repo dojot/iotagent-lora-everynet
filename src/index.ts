@@ -1,4 +1,4 @@
-import { IoTAgent }  from "dojot-iotagent";
+import { IoTAgent }  from "@dojot/iotagent-nodejs";
 import { WebSocketClient } from "./websocket"
 import { config } from "./config";
 import { Agent } from "./agent";

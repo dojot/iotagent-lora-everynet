@@ -1,11 +1,21 @@
-FROM node:8
-LABEL maintainer="Giovanni Curiel dos Santos giovannicuriel@gmail.com"
+FROM node:8.14.0-alpine as basis
 
-WORKDIR /opt
+WORKDIR /opt/iotagent-lora
 
-RUN apt-get update --no-install-recommends && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apk add git python make bash gcc g++ zeromq-dev musl-dev zlib-dev krb5-dev --no-cache
+RUN mkdir -p ./src
 
-COPY . /opt/
+COPY package.json .
+COPY package-lock.json .
+RUN npm install
+COPY . .
+RUN npm run-script build
+RUN chmod +x entrypoint.sh
 
-RUN npm install && npm run build
-CMD ["node", "/opt/build/index.js"]
+
+FROM node:8.14.0-alpine
+COPY --from=basis /opt/iotagent-lora /opt/iotagent-lora
+WORKDIR /opt/iotagent-lora
+EXPOSE 80
+ENTRYPOINT ["./entrypoint.sh"]
+
