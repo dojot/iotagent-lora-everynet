@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Giovanni Curiel dos Santos",
   "license": "GPL-3.0",
@@ -17,6 +19,8 @@
     "dojot-iotagent": "github:dojot/iotagent-nodejs",
     "redis": "^2.8.0",
     "ws": "^5.1.1",
-    "typescript": "~2.9.2"
-  }
+    "typescript": "~2.9.2",
+    "snyk": "^1.161.1"
+  },
+  "snyk": true
 }
