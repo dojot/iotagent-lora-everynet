@@ -62,22 +62,8 @@ function cleanEverynetDevice(everynetDevice: any) {
  */
 function assertEverynetDevice(everynetDevice: any) : number {
   let mandatory_params = [
-          "dev_eui",
-          "app_eui",
-          "app_key",
-          "activation",
-          "encryption",
-          "dev_addr",
-          "nwkskey",
-          "appskey",
-          "dev_class",
-          "band",
-          "counters_size",
-          "strict_counter",
-          "adr_datarate",
-          "adr_enabled",
-          "adr_mode",
-          "adr_tx_power"]
+          "dev_eui"
+        ]
 
     for (let param of mandatory_params) {
       if (!(param in everynetDevice)) { return -1; }
