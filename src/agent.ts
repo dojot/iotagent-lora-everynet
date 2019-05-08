@@ -86,7 +86,6 @@ class Agent {
         let decryptedPayload: any = decode(messageObj.params.payload);
 
         let updateData = {
-         "encrypted_payload": messageObj.params.payload,
          "battery_voltage": decryptedPayload["Battery voltage"]["value"],
          "distance": decryptedPayload["Distance"]["value"]
         }
