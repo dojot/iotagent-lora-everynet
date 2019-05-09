@@ -20,25 +20,34 @@ class CacheHandler {
   // The cache.
   // TODO: this would be better placed in a Redis instance.
   cache: {
-    [device: string]: CacheEntry;
+    [device: string]: CacheEntry[];
   }
 
   constructor() {
     this.cache = {};
   }
 
-
   /**
    * Perform a cache lookup.
    * @param device Device eui
    * @returns The cached device data
    */
-  lookup(device: string) : CacheEntry | null {
+  lookup(device: string) : CacheEntry[] | null {
     if (device in this.cache) {
       return this.cache[device];
     } else {
       return null;
     }
+  }
+  
+  /**
+   * Add a cache entry.
+   * @param device Device eui
+   * @param entry Cache Entry
+   */
+  add(device: string, entry: CacheEntry){
+    if(this.cache[device] == undefined) this.cache[device] = [];
+    this.cache[device].push(entry);
   }
 }
 
