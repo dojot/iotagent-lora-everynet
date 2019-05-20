@@ -64,36 +64,42 @@ class Agent {
    * @param data The data received from WebSocket.
    */
   processWebSocketMessage(messageObj: EveryNetMessage): void {
-    let cacheEntry = this.cacheHandler.lookup(messageObj.meta.device_addr);
+    let cacheEntries = this.cacheHandler.lookup(messageObj.meta.device_addr);
 
-    if (cacheEntry === null) {
+    if (cacheEntries === null) {
       console.log('Cannot get device data from device ID: ' + messageObj.meta.device_addr);
       return;
     }
-    if (cacheEntry.id === "") {
-      console.log("No device ID was detected. Discarding message");
-      // TODO emit iotagent warning
-      return;
-    }
-    console.log("Detected Dojot device ID: " + cacheEntry.id + " <-> LoRa device eui: " + messageObj.meta.device_addr);
 
-    // TODO It might be a good idea to format the message sent through Kafka
-    // as a simple key-value JSON, so a flow to translate this message is not
-    // needed.
-    
+    for(let cacheEntry of cacheEntries){
+      if (cacheEntry.id === "") {
+        console.log("No device ID was detected. Discarding message");
+        // TODO emit iotagent warning
+        return;
+      }
 
-    if (messageObj.type === "uplink") {
+      console.log("Detected Dojot device ID: " + cacheEntry.id + " <-> LoRa device eui: " + messageObj.meta.device_addr);
+
+      // TODO It might be a good idea to format the message sent through Kafka
+      // as a simple key-value JSON, so a flow to translate this message is not
+      // needed.
+      
+      if (messageObj.type === "uplink") {
         let decryptedPayload: any = decode(messageObj.params.payload);
 
         let updateData = {
-         "battery_voltage": decryptedPayload["Battery voltage"]["value"],
-         "distance": decryptedPayload["Distance"]["value"]
+        "battery_voltage": decryptedPayload["Battery voltage"]["value"],
+        "distance": decryptedPayload["Distance"]["value"]
         }
 
         console.log("Update data: " + updateData);
 
         this.iotagent.updateAttrs(cacheEntry.id, cacheEntry.tenant, updateData, {});
+      }
+
     }
+
+    
   }
 
   processDeviceCreation(tenant: string, device: DeviceEvent) {
@@ -113,8 +119,7 @@ class Agent {
         return;
       }
       let loraId = everynetDevice.dev_eui;
-      this.cacheHandler.cache[loraId] = new CacheEntry(dojotDevice.id, tenant);
-    
+      this.cacheHandler.add(loraId, new CacheEntry(dojotDevice.id, tenant))
     }
   }
 
