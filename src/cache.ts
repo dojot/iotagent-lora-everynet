@@ -1,7 +1,7 @@
 import util = require("util");
 
 
-class CacheEntry {
+export class CacheEntry {
   public id: string;
   public tenant: string;
 
@@ -10,12 +10,16 @@ class CacheEntry {
     this.id = id;
     this.tenant = tenant;
   }
+
+  public equals(other: CacheEntry) {
+    return (this.id === other.id && this.tenant === other.tenant);
+  }
 };
 
 /**
  * Class responsible for device cache management and cache lookup
  */
-class CacheHandler {
+export class CacheHandler {
 
   // The cache.
   // TODO: this would be better placed in a Redis instance.
@@ -42,14 +46,27 @@ class CacheHandler {
   
   /**
    * Add a cache entry.
-   * @param device Device eui
+   * @param loraId Lora Id
    * @param entry Cache Entry
    */
-  add(device: string, entry: CacheEntry){
-    if(this.cache[device] == undefined) this.cache[device] = [];
-    this.cache[device].push(entry);
+  add(loraId: string, entry: CacheEntry){
+    if(this.cache[loraId] == undefined) this.cache[loraId] = [];
+    this.cache[loraId].push(entry);
   }
-}
 
-export { CacheHandler };
-export { CacheEntry };
+  /**
+   * Remove a cache entry.
+   * @param cacheEntry Device cache entry
+   */
+  remove(cacheEntry: CacheEntry) {
+    let loraIds = Object.keys(this.cache);
+    loraIds.forEach(loraId => {
+      this.cache[loraId].forEach((storedCache, index) => {
+        if (storedCache.equals(cacheEntry)) {
+          this.cache[loraId].splice(index, 1);
+        }
+      });
+    });
+  }
+
+}
