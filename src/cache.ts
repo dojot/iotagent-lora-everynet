@@ -66,7 +66,7 @@ export class CacheHandler {
           this.cache[loraId].splice(index, 1);
         }
       });
-    }); 
+    });
   }
 
 }
