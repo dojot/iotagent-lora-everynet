@@ -64,10 +64,10 @@ class Agent {
    * @param data The data received from WebSocket.
    */
   processWebSocketMessage(messageObj: EveryNetMessage): void {
-    let cacheEntries = this.cacheHandler.lookup(messageObj.meta.device_addr);
+    let cacheEntries = this.cacheHandler.lookup(messageObj.meta.device);
 
     if (cacheEntries === null) {
-      console.log('Cannot get device data from device ID: ' + messageObj.meta.device_addr);
+      console.log('Cannot get device data from device ID: ' + messageObj.meta.device);
       return;
     }
 
@@ -78,7 +78,7 @@ class Agent {
         return;
       }
 
-      console.log("Detected Dojot device ID: " + cacheEntry.id + " <-> LoRa device eui: " + messageObj.meta.device_addr);
+      console.log("Detected Dojot device ID: " + cacheEntry.id + " <-> LoRa device eui: " + messageObj.meta.device);
 
       // TODO It might be a good idea to format the message sent through Kafka
       // as a simple key-value JSON, so a flow to translate this message is not
