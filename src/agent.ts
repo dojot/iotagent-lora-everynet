@@ -123,19 +123,24 @@ class Agent {
     }
   }
 
-  processDeviceRemoval(device: DeviceEvent) {
+  processDeviceUpdate(tenant: string, device: DeviceEvent) {
+    console.log("Updating device: ");
+    this.processDeviceRemoval(tenant, device);
+    this.processDeviceCreation(tenant, device);
+  }
+
+  processDeviceRemoval(tenant: string, device: DeviceEvent) {
     console.log("Removing device: ");
     console.log(util.inspect(device, {depth: null}));
 
     console.log("Trying to find LoRa template...");
-    let [attr, templateid] = this.findLoRaId(device.data)
+    let dojotDevice: DojotDevice = device.data;
+    let [attr, templateid] = this.findLoRaId(dojotDevice);
+    
     console.log("Result is: " + attr)
 
     if (templateid && attr) {
-      let loraId = attr.static_value;
-      this.everynetNs.removeDevice(loraId).then(() => {
-        delete this.cacheHandler.cache[loraId];
-      })
+      this.cacheHandler.remove(new CacheEntry(dojotDevice.id, tenant));
     }
   }
 
@@ -155,12 +160,17 @@ class Agent {
     this.iotagent.on('iotagent.device', 'device.create', (tenant: string, event: any) => {
       console.log("Processing device creation")
       this.processDeviceCreation(tenant, event);
-    })
+    });
+
+    this.iotagent.on('iotagent.device', 'device.update', (tenant: string, event: any) => {
+      console.log("Processing device update")
+      this.processDeviceUpdate(tenant, event);
+    });
 
     this.iotagent.on('iotagent.device', 'device.remove', (tenant: string, event: any) => {
       console.log("Processing device creation")
-      this.processDeviceRemoval(event);
-    })
+      this.processDeviceRemoval(tenant, event);
+    });
   }
 }
 
