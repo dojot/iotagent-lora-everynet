@@ -1,0 +1,21 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.19.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-AXIOS-174505:
+    - '@types/axios > axios':
+        patched: '2020-10-13T16:35:45.373Z'
+    - iotagent-nodejs > axios:
+        patched: '2020-10-13T16:35:45.373Z'
+  'npm:extend:20180424':
+    - iotagent-nodejs > kafka-node > snappy > node-gyp > request > extend:
+        patched: '2020-10-13T16:35:45.373Z'
+  SNYK-JS-LODASH-567746:
+    - iotagent-nodejs > kafka-node > lodash:
+        patched: '2020-10-13T16:35:45.373Z'
+    - iotagent-nodejs > kafka-node > async > lodash:
+        patched: '2020-10-13T16:35:45.373Z'
+  'npm:stringstream:20180511':
+    - iotagent-nodejs > kafka-node > snappy > node-gyp > request > stringstream:
+        patched: '2020-10-13T16:35:45.373Z'
