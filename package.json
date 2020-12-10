@@ -1,15 +1,22 @@
 {
   "name": "dojot.iotagent.lora-everynet",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "check-licenses": "apache2-license-checker"
   },
   "author": "Giovanni Curiel dos Santos",
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
   "dependencies": {
     "@types/axios": "^0.14.0",
     "@types/ws": "^4.0.2",
@@ -18,5 +25,8 @@
     "redis": "^2.8.0",
     "ws": "^7.0.0",
     "typescript": "~2.9.2"
+  },
+  "devDependencies": {
+    "@bbc/apache2-license-checker": "^1.1.4"
   }
 }
