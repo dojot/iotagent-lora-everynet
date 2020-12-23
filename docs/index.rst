@@ -66,8 +66,8 @@ they are not that hard to start and to use (given that you use dojot's
 information about how to create a new device.
 
 
-.. |License badge| image:: https://img.shields.io/badge/license-GPL-blue.svg
-   :target: https://opensource.org/licenses/GPL-3.0
+.. |License badge| image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
+   :target: https://opensource.org/licenses/Apache-2.0
 .. |Docker badge| image:: https://img.shields.io/docker/pulls/dojot/iotagent-lora-everynet.svg
    :target: https://hub.docker.com/r/dojot/iotagent-lora-everynet/
 .. |Travis badge| image:: https://travis-ci.org/dojot/iotagent-lora-everynet.svg?branch=cpqd_master
