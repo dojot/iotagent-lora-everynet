@@ -13,7 +13,7 @@
   "dependencies": {
     "@types/axios": "^0.14.0",
     "@types/ws": "^4.0.2",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "dojot-iotagent": "github:dojot/iotagent-nodejs",
     "redis": "^2.8.0",
     "ws": "^5.1.1",
