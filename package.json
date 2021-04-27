@@ -22,7 +22,7 @@
     "@types/ws": "^4.0.2",
     "axios": "^0.18.0",
     "@dojot/iotagent-nodejs": "^2.1.0-beta.10",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "ws": "^7.0.0",
     "typescript": "~2.9.2"
   },
